@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BaintPlay — Demo</title>
+<style>
+  :root{
+    --bg:#ffffff;--card:#f8fafc;--text:#0f172a;--muted:#64748b;--accent1:#2979ff;--accent2:#00c853;--accent3:#ff6a00;
+  }
+  [data-theme="dark"]{ --bg:#0b1220; --card:#071027; --text:#e6eef8; --muted:#9fb0c9; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px;margin:28px auto;padding:20px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent3),var(--accent2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+  h1{margin:0;font-size:1.25rem}
+  .controls{display:flex;gap:10px;align-items:center}
+  .search{padding:10px 12px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);min-width:260px}
+  .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;background:linear-gradient(90deg,var(--accent3),var(--accent2));color:white;font-weight:600}
+  .ghost{background:transparent;border:1px solid rgba(15,23,42,0.06);color:var(--text)}
+  .topbar{margin:18px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .tabs{display:flex;gap:8px}
+  .tab{padding:8px 12px;border-radius:8px;cursor:pointer;border:1px solid rgba(15,23,42,0.04);background:var(--card)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}
+  .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(11,17,30,0.03)}
+  .card .icon{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#ffd89b,#ff6a00);display:inline-flex;align-items:center;justify-content:center;color:white;font-weight:700;margin-bottom:8px}
+  .card h3{margin:6px 0 6px;font-size:1rem}
+  .rating{color:var(--muted);font-size:0.9rem}
+  .small{font-size:0.92rem;color:var(--muted);margin-top:8px}
+  .actions{display:flex;gap:8px;margin-top:10px}
+  .install{background:var(--accent1);color:#fff;padding:8px 10px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
+  .details{display:none}
+  .back{cursor:pointer;color:var(--accent1);font-weight:700}
+  .center{display:flex;align-items:center;justify-content:center}
+  .footer{margin-top:28px;color:var(--muted);font-size:0.9rem;text-align:center}
+  .mode{cursor:pointer;padding:8px;border-radius:10px;border:1px solid rgba(15,23,42,0.06)}
+  .search-results{margin-top:12px;color:var(--muted);font-size:0.95rem}
+  /* install modal */
+  .install-overlay{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(2,6,23,0.45);display:flex;align-items:center;justify-content:center;z-index:40}
+  .install-box{background:var(--bg);padding:22px;border-radius:12px;min-width:320px;box-shadow:0 10px 40px rgba(2,6,23,0.3)}
+  .progress{height:10px;background:#e6eef8;border-radius:10px;overflow:hidden;margin-top:14px}
+  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent1),#6a9cff);width:0%}
+  .myapps{margin-top:18px}
+  .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:#eef2ff;color:#1e3a8a;font-weight:700;font-size:0.82rem}
+  /* responsive */
+  @media (max-width:540px){
+    .search{min-width:120px}
+    .grid{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body data-theme="light">
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">BC</div>
+      <div>
+        <h1>BaintPlay — Apps for the Future</h1>
+        <div style="font-size:0.9rem;color:var(--muted)">Market for AI & Web3 apps — demo</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input id="search" class="search" placeholder="Search apps & AI tools (try: agent, game)">
+      <button id="toggleTheme" class="mode" title="Toggle light / dark">🌙</button>
+      <button class="btn" id="joinWait">Join Waitlist</button>
+    </div>
+  </header>
+
+  <div class="topbar">
+    <div class="tabs" id="tabs">
+      <div class="tab" data-cat="featured">Featured</div>
+      <div class="tab" data-cat="games">Games</div>
+      <div class="tab" data-cat="ai">AI</div>
+      <div class="tab" data-cat="productivity">Productivity</div>
+      <div class="tab" data-cat="social">Social</div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+      <div class="badge">Demo</div>
+      <div style="font-size:0.95rem;color:var(--muted)">Light / Dark demo</div>
+    </div>
+  </div>
+
+  <main id="main">
+    <!-- HOME / GRID -->
+    <section id="home">
+      <div id="grid" class="grid"></div>
+
+      <div class="myapps">
+        <h3 style="margin:12px 0 6px">My Apps</h3>
+        <div id="myappsArea" class="grid"></div>
+      </div>
+    </section>
+
+    <!-- DETAILS -->
+    <section id="details" class="details">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+        <div class="back" id="backBtn">← Back</div>
+        <h2 id="detailTitle" style="margin:0">App Name</h2>
+      </div>
+      <div class="card" style="display:flex;gap:14px;align-items:flex-start">
+        <div style="min-width:120px">
+          <div id="detailIcon" class="icon" style="width:96px;height:96px;border-radius:12px;background:linear-gradient(135deg,#ffd89b,#ff6a00);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1.6rem"></div>
+        </div>
+        <div style="flex:1">
+          <div id="detailDesc" class="small">Short description here</div>
+          <div style="margin-top:12px">
+            <button id="installBtn" class="install">Install</button>
+            <button id="openBtn" class="ghost btn" style="display:none;margin-left:8px">Open</button>
+          </div>
+          <div id="detailRating" class="rating small" style="margin-top:8px"></div>
+          <div id="screenshotRow" style="margin-top:12px;display:flex;gap:8px">
+            <div style="width:120px;height:80px;background:linear-gradient(135deg,#eef2ff,#dbeafe);border-radius:8px"></div>
+            <div style="width:120px;height:80px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:8px"></div>
+            <div style="width:120px;height:80px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);border-radius:8px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="installOverlay" style="display:none" class="install-overlay">
+    <div class="install-box">
+      <div id="installTitle" style="font-weight:800;font-size:1.05rem">Installing</div>
+      <div id="installText" style="color:var(--muted);margin-top:6px">Preparing to install...</div>
+      <div class="progress"><i id="progressBar" style="width:0%"></i></div>
+      <div style="margin-top:12px;text-align:right">
+        <button id="cancelInstall" class="ghost btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px" class="footer">
+    BaintPlay demo • Built in public • © 2025 Baintcomputer AIOPs
+    <div style="margin-top:8px">
+      <a href="https://x.com/Baintcomputer" target="_blank">X</a> •
+      <a href="https://www.tiktok.com/@baintcomputer" target="_blank">TikTok</a> •
+      <a href="https://www.instagram.com/baintcomputer" target="_blank">Instagram</a> •
+      <a href="https://github.com/BAINT-tech" target="_blank">GitHub</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // demo app list
+  const apps = [
+    {id:'agentrank',category:'ai',name:'AgentRank',desc:'AI-powered reputation tracker',rating:4.6,icon:'AR'},
+    {id:'baintos',category:'productivity',name:'BaintComputer OS',desc:'Next-gen AI-driven OS',rating:4.9,icon:'BC'},
+    {id:'ancient',category:'games',name:'Ancient•Internet•Memes',desc:'Meme culture meets token economy',rating:4.5,icon:'AI'},
+    {id:'cryptoads',category:'social',name:'Crypto Ads Hub',desc:'Multi-chain ad platform for Web3',rating:4.4,icon:'CA'},
+    {id:'trivia',category:'games',name:'BaintTrivia',desc:'Quick AI trivia challenges',rating:4.3,icon:'BT'}
+  ];
+  let installed = [];
+
+  const grid = document.getElementById('grid');
+  const myappsArea = document.getElementById('myappsArea');
+  const details = document.getElementById('details');
+  const home = document.getElementById('home');
+  const backBtn = document.getElementById('backBtn');
+  const detailTitle = document.getElementById('detailTitle');
+  const detailDesc = document.getElementById('detailDesc');
+  const detailRating = document.getElementById('detailRating');
+  const detailIcon = document.getElementById('detailIcon');
+  const installBtn = document.getElementById('installBtn');
+  const openBtn = document.getElementById('openBtn');
+  const installOverlay = document.getElementById('installOverlay');
+  const progressBar = document.getElementById('progressBar');
+  const installTitle = document.getElementById('installTitle');
+  const installText = document.getElementById('installText');
+  const cancelInstall = document.getElementById('cancelInstall');
+  const searchInput = document.getElementById('search');
+
+  // initial populate
+  function renderGrid(filter='featured', q='') {
+    grid.innerHTML='';
+    let list = apps.slice();
+    if(filter && filter!=='featured') list = list.filter(a=>a.category===filter);
+    if(q) list = list.filter(a => a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
+    list.forEach(app=>{
+      const el = document.createElement('div'); el.className='card';
+      el.innerHTML = `<div class="icon" style="background:linear-gradient(135deg,#9be7ff,#2979ff)">${app.icon}</div>
+                      <h3>${app.name}</h3>
+                      <div class="small">${app.desc}</div>
+                      <div class="actions">
+                        <button class="install" data-id="${app.id}">Install</button>
+                        <button class="ghost btn" data-id="${app.id}" style="margin-left:auto">Details</button>
+                      </div>
+                      <div class="rating">⭐ ${app.rating}</div>`;
+      grid.appendChild(el);
+    });
+    bindCardButtons();
+  }
+
+  function renderMyApps(){
+    myappsArea.innerHTML='';
+    if(installed.length===0) {
+      myappsArea.innerHTML = `<div style="color:var(--muted)">No installed apps yet — install one from above</div>`;
+      return;
+    }
+    installed.forEach(app=>{
+      const el = document.createElement('div'); el.className='card';
+      el.innerHTML = `<div style="display:flex;gap:10px;align-items:center">
+        <div class="icon" style="background:linear-gradient(135deg,#ffd89b,#ff6a00)">${app.icon}</div>
+        <div><strong>${app.name}</strong><div class="small">${app.desc}</div></div>
+      </div>`;
+      myappsArea.appendChild(el);
+    });
+  }
+
+  function bindCardButtons(){
+    document.querySelectorAll('.install').forEach(b=>{
+      b.onclick = ()=> startInstall(b.dataset.id);
+    });
+    document.querySelectorAll('.ghost.btn').forEach(b=>{
+      b.onclick = ()=> openDetails(b.dataset.id);
+    });
+  }
+
+  function openDetails(id){
+    const app = apps.find(a=>a.id===id);
+    if(!app) return;
+    home.style.display='none'; details.style.display='block';
+    detailTitle.textContent = app.name;
+    detailDesc.textContent = app.desc;
+    detailRating.textContent = `⭐ ${app.rating} • Demo`;
+    detailIcon.textContent = app.icon;
+    installBtn.dataset.id = app.id;
+    openBtn.style.display = installed.find(x=>x.id===app.id)?'inline-block':'none';
+  }
+
+  backBtn.onclick = ()=> { details.style.display='none'; home.style.display='block'; }
+
+  installBtn.onclick = ()=> startInstall(installBtn.dataset.id);
+  openBtn.onclick = ()=> alert('Opening demo (mock)');
+
+  function startInstall(id){
+    const app = apps.find(a=>a.id===id);
+    if(!app) return;
+    installOverlay.style.display='flex';
+    installTitle.textContent = `Installing ${app.name}`;
+    installText.textContent = 'Preparing files...';
+    progressBar.style.width='0%';
+    let pct=0;
+    const t = setInterval(()=>{
+      pct += Math.random()*18 + 8;
+      if(pct>=100) pct=100;
+      progressBar.style.width = pct+'%';
+      if(pct>=100){
+        clearInterval(t);
+        installText.textContent = 'Installed successfully ✅';
+        setTimeout(()=>{
+          installOverlay.style.display='none';
+          // mark as installed
+          if(!installed.find(a=>a.id===app.id)) installed.push(app);
+          renderMyApps();
+          // show Open at details if it's open
+          openBtn.style.display = 'inline-block';
+        },700);
+      } else {
+        installText.textContent = 'Downloading... '+Math.floor(pct)+'%';
+      }
+    },300);
+  }
+
+  cancelInstall.onclick = ()=> { installOverlay.style.display='none'; }
+
+  // tabs
+  document.querySelectorAll('#tabs .tab').forEach(t=>{
+    t.onclick = ()=> {
+      document.querySelectorAll('#tabs .tab').forEach(x=>x.style.opacity=1);
+      t.style.opacity=0.7;
+      renderGrid(t.dataset.cat);
+    }
+  });
+
+  // search
+  searchInput.oninput = ()=> {
+    const q = searchInput.value.trim().toLowerCase();
+    renderGrid('featured', q);
+    if(q) document.getElementById('tabs').querySelectorAll('.tab').forEach(x=>x.style.opacity=1);
+  };
+
+  // theme toggle
+  const toggleTheme = document.getElementById('toggleTheme');
+  toggleTheme.onclick = ()=> {
+    const el = document.body;
+    el.dataset.theme = el.dataset.theme==='light' ? 'dark' : 'light';
+    toggleTheme.textContent = el.dataset.theme==='light' ? '🌙' : '☀️';
+  }
+
+  // join waitlist button
+  document.getElementById('joinWait').onclick = ()=> window.open('https://docs.google.com/forms/d/e/1FAIpQLSdQQISGj_jVOm57TOjAmq0RVe4VtARJ_Pwh7G8Ey92jg9sdvA/viewform','_blank');
+
+  // initial
+  renderGrid('featured');
+  renderMyApps();
+</script>
+</body>
+</html>
